@@ -10,7 +10,8 @@
 
 
 import pygame
-from random import randint, choice
+from random import randint
+
 pygame.init()
 
 FPS = 60
@@ -77,14 +78,42 @@ pygame.mixer.music.play(-1)
 vol = 0.1
 pygame.mixer.music.set_volume(vol)
 
-myau = pygame.mixer.Sound("sounds/mur2.ogg")
-ship = pygame.mixer.Sound("sounds/ship1.ogg")
-win = pygame.mixer.Sound("sounds/mur4.ogg")
-rev = pygame.mixer.Sound("sounds/ryk2.ogg")
-mur = pygame.mixer.Sound("sounds/mur1.ogg")
-
-a = pygame.draw
 secret_number = ""
+
+class Cat():
+    def __init__(self):
+        self.myau = pygame.mixer.Sound("sounds/mur2.ogg")
+        self.ship = pygame.mixer.Sound("sounds/ship1.ogg")
+        self.win = pygame.mixer.Sound("sounds/mur4.ogg")
+        self.rev = pygame.mixer.Sound("sounds/ryk2.ogg")
+        self.mur = pygame.mixer.Sound("sounds/mur1.ogg")
+
+    def shipping(self):
+        self.ship.play()
+        return "Silly joke, young lady! You've lost this attempt."
+
+    def congratulate(self):
+        self.win.play()
+        return "You are right! You are win!"
+
+    def small_myau(self):
+        self.myau.play()
+        return "Your number is too small, honey...Try again."
+
+    def big_myau(self):
+        self.myau.play()
+        return "Your number is too big, honey...Try again."
+
+    def attack(self):
+        self.rev.play()
+        return "You lost the time. Run!"
+
+    def murrr(self):
+        self.mur.play()
+        return "You are so sweet, my heart! Of course, we can play again."
+
+
+cat = Cat()
 
 while 1:
     for event in pygame.event.get():
@@ -97,38 +126,15 @@ while 1:
     sc.blit(number_surf, ((W-50), (H-20)))
 
     keys = pygame.key.get_pressed()
+    key_press = [keys[pygame.K_0], keys[pygame.K_1], keys[pygame.K_2], keys[pygame.K_3], keys[pygame.K_4],
+                 keys[pygame.K_5], keys[pygame.K_6], keys[pygame.K_7], keys[pygame.K_8], keys[pygame.K_9]]
 
-    if keys[pygame.K_1]:
-        secret_number += "1"
-        pygame.time.delay(200)
-    elif keys[pygame.K_2]:
-        secret_number += "2"
-        pygame.time.delay(200)
-    elif keys[pygame.K_3]:
-        secret_number += "3"
-        pygame.time.delay(200)
-    elif keys[pygame.K_4]:
-        secret_number += "4"
-        pygame.time.delay(200)
-    elif keys[pygame.K_5]:
-        secret_number += "5"
-        pygame.time.delay(200)
-    elif keys[pygame.K_6]:
-        secret_number += "6"
-        pygame.time.delay(200)
-    elif keys[pygame.K_7]:
-        secret_number += "7"
-        pygame.time.delay(200)
-    elif keys[pygame.K_8]:
-        secret_number += "8"
-        pygame.time.delay(200)
-    elif keys[pygame.K_9]:
-        secret_number += "9"
-        pygame.time.delay(200)
-    elif keys[pygame.K_0]:
-        secret_number += "0"
-        pygame.time.delay(200)
-    elif keys[pygame.K_BACKSPACE]:
+    for i, e in enumerate(key_press):
+        if e:
+            secret_number += f"{i}"
+            pygame.time.delay(200)
+
+    if keys[pygame.K_BACKSPACE]:
         secret_number = secret_number[0:(len(secret_number) - 1)]
         pygame.time.delay(200)
     elif keys[pygame.K_UP]:
@@ -150,8 +156,7 @@ while 1:
     elif keys[pygame.K_TAB]:
         counter = 0
         cat_number = randint(0, 100)
-        text = "You are so sweet, my heart! Of course, we can play again."
-        mur.play()
+        text = cat.murrr()
         cat_surf = pygame.image.load("images/cat_wonderland.png")
         cat_rect = cat_surf.get_rect(center=(cat_x, cat_y))
         sc.blit(cat_surf, cat_rect)
@@ -161,27 +166,22 @@ while 1:
         counter += 1
         try:
             if counter >= 10:
-                text = "You lost the time. Run!"
+                text = cat.attack()
                 cat_surf = pygame.image.load("images/cats2.com (7).png")
                 cat_rect = cat_surf.get_rect(center=(cat_x, (cat_y+70)))
                 sc.blit(cat_surf, cat_rect)
-                rev.play()
             else:
                 if int(secret_number) > cat_number:
-                    text = "Your number is too big, honey...Try again."
-                    myau.play()
+                    text = cat.big_myau()
                 elif int(secret_number) < cat_number:
-                    text = "Your number is too small, honey...Try again."
-                    myau.play()
+                    text = cat.small_myau()
                 elif int(secret_number) == cat_number:
-                    text = "You are right! You are win!"
-                    win.play()
+                    text = cat.congratulate()
                     cat_surf = pygame.image.load("images/black_cat_in_hat.png")
                     cat_rect = cat_surf.get_rect(center=(cat_x, cat_y))
                     sc.blit(cat_surf, cat_rect)
         except:
-            text = "Silly joke, young lady! You've lost this attempt."
-            ship.play()
+            text = cat.shipping()
         secret_number = ""
 
     secret_text = FONT.render(secret_number, True, AQUA)
